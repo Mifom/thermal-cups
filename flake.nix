@@ -22,7 +22,7 @@
         export XDG_CACHE_HOME=.cache
         zig build install -Dgenerate_ppd=true -Dnew_raster=true
         mkdir -p $out/lib/cups/filter/
-        cp zig-out/bin/* $out/lib/cups/filter
+        cp zig-out/bin/thermal-cups $out/lib/cups/filter/rastertozj
         mkdir -p $out/share/cups/model/zjiang
         mkdir -p $out/share/cups/model/xprinter
         cp zig-out/ppd/zj* $out/share/cups/model/zjiang/
