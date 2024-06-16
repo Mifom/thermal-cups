@@ -17,7 +17,7 @@ pub fn build(b: *std.Build) void {
     thermal.linkLibC();
     thermal.linkSystemLibrary("cups");
 
-    thermal.addCSourceFiles(&.{"rastertozj.c"}, &cflags);
+    thermal.addCSourceFiles(.{ .files = &[_][]const u8{"rastertozj.c"}, .flags = &cflags });
     if (newRaster) {
         thermal.defineCMacro("NEWRASTER", null);
     }
@@ -25,12 +25,12 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(thermal);
 
     if (usePpdc) {
-        const ppd = LazyPath.relative("ppd");
+        const ppd = LazyPath{ .cwd_relative = "ppd" };
         const ppdc = b.addSystemCommand(&.{"ppdc"});
         ppdc.setEnvironmentVariable("LANG", "c");
         ppdc.addArg("-d");
         ppdc.addDirectoryArg(ppd);
-        ppdc.addFileArg(.{ .path = "zjdrv.drv" });
+        ppdc.addFileArg(.{ .cwd_relative = "zjdrv.drv" });
 
         const ppds = b.addInstallDirectory(.{ .source_dir = ppd, .install_dir = .prefix, .install_subdir = "ppd" });
         ppds.step.dependOn(&ppdc.step);
@@ -42,9 +42,9 @@ pub fn build(b: *std.Build) void {
         // }
 
     } else {
-        const artifact58 = b.addInstallFile(.{ .path = "zj58.ppd" }, "ppd/zj58.ppd");
+        const artifact58 = b.addInstallFile(.{ .cwd_relative = "zj58.ppd" }, "ppd/zj58.ppd");
         b.getInstallStep().dependOn(&artifact58.step);
-        const artifact80 = b.addInstallFile(.{ .path = "zj80.ppd" }, "ppd/zj80.ppd");
+        const artifact80 = b.addInstallFile(.{ .cwd_relative = "zj80.ppd" }, "ppd/zj80.ppd");
         b.getInstallStep().dependOn(&artifact80.step);
     }
 }
